@@ -11,3 +11,6 @@ wheels/
 
 # env
 .env
+
+# firebase key
+firebase-key.json
