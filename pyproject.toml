@@ -10,5 +10,6 @@ dependencies = [
     "firebase-admin>=6.9.0",
     "google-adk>=1.16.0",
     "mem0ai>=1.0.0",
+    "psycopg2-binary>=2.9.11",
     "ruff>=0.14.1",
 ]
