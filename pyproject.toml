@@ -9,5 +9,6 @@ dependencies = [
     "fastapi==0.118.3",
     "firebase-admin>=6.9.0",
     "google-adk>=1.16.0",
+    "mem0ai>=1.0.0",
     "ruff>=0.14.1",
 ]
