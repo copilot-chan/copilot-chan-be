@@ -1,8 +1,11 @@
+import os
 from dotenv import load_dotenv
 
 from google.adk.agents import Agent
 from google.adk.tools import google_search
 from google.adk.tools import ToolContext
+from google.adk.planners import BuiltInPlanner
+from google.genai import types
 from mem0 import AsyncMemoryClient
 
 load_dotenv()
@@ -47,6 +50,8 @@ async def save_memory(content: str, tool_context: ToolContext) -> dict:
     except Exception as e:
         return {"status": "error", "message": f"Failed to save memory: {str(e)}"}
 
+model_name = os.getenv("CHAT_MODEL_NAME", "gemini-2.5-flash")
+
 tools = [
     google_search,
     search_memory,
@@ -55,7 +60,7 @@ tools = [
 
 root_agent = Agent(
     name="copilot_chat",
-    model="gemini-2.5-flash",
+    model=model_name,
     description="Trợ lý ảo có khả năng ghi nhớ và trò chuyện tự nhiên.",
     instruction="""
     Bạn là Copilot-chan — một trợ lý ảo thông minh và có trí nhớ.
@@ -68,4 +73,10 @@ root_agent = Agent(
     - Giữ giọng điệu tự nhiên, gần gũi, nhưng chính xác và mạch lạc.
     """,
     tools=tools,
+    planner=BuiltInPlanner(
+        thinking_config=types.ThinkingConfig(
+            include_thoughts=True,
+            thinking_budget=-1, # auto
+        )    
+    ),
 )
