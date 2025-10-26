@@ -423,7 +423,7 @@ requires-dist = [
     { name = "ag-ui-adk", specifier = ">=0.3.1" },
     { name = "fastapi", specifier = "==0.118.3" },
     { name = "firebase-admin", specifier = ">=6.9.0" },
-    { name = "google-adk", specifier = ">=1.16.0" },
+    { name = "google-adk", specifier = ">=1.17.0" },
     { name = "mem0ai", specifier = ">=1.0.0" },
     { name = "psycopg2-binary", specifier = ">=2.9.11" },
     { name = "ruff", specifier = ">=0.14.1" },
@@ -627,7 +627,7 @@ wheels = [
 
 [[package]]
 name = "google-adk"
-version = "1.16.0"
+version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "absolufy-imports" },
@@ -668,9 +668,8 @@ dependencies = [
     { name = "watchdog" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b9/f0/6ec7beb2a00f087840f7ac1991dddc0c3fb564ecec5a39b0ceead6bbd2c6/google_adk-1.16.0.tar.gz", hash = "sha256:42c88b7fb96e2fc171e911ef0b59451ba2bcb449b3e2270f2896e7c7957c2864", size = 1780053, upload-time = "2025-10-09T18:30:21.978Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/1d/96/1a85ab88135fc1bb52bf41e170606ac1fc0d4a4018462ea7b63d0f9caea9/google_adk-1.16.0-py3-none-any.whl", hash = "sha256:af35f821ee76700905b99eb6279222270d93286f1bd0485fc52d255e3c836880", size = 2062876, upload-time = "2025-10-09T18:30:20.238Z" },
+    { url = "https://files.pythonhosted.org/packages/1f/6e/5aadd9d4afd69ecd546d4ae02fdaf1eb29e1d1a5c84d1ae1d16906271d43/google_adk-1.17.0-py3-none-any.whl", hash = "sha256:1d32b425087bd57015b18c86f9850366fd5ea6a805bbcd147493750438ed6276", size = 2035820, upload-time = "2025-10-22T20:39:09.242Z" },
 ]
 
 [[package]]

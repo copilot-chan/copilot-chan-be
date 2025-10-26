@@ -1,8 +1,9 @@
 import os
 from dotenv import load_dotenv
+import asyncio
 
 from google.adk.agents import Agent
-from google.adk.tools import google_search
+from google.adk.tools.google_search_tool import GoogleSearchTool
 from google.adk.tools import ToolContext
 from google.adk.planners import BuiltInPlanner
 from google.genai import types
@@ -45,15 +46,17 @@ async def save_memory(content: str, tool_context: ToolContext) -> dict:
     user_id = tool_context.session.user_id
     
     try:
-        mem0.add([{"role": "user", "content": content}], user_id=user_id)
+        asyncio.create_task(mem0.add([{"role": "user", "content": content}], user_id=user_id))
         return {"status": "success", "message": "Information saved to memory"}
     except Exception as e:
         return {"status": "error", "message": f"Failed to save memory: {str(e)}"}
 
+google_seacrh_agent = GoogleSearchTool(bypass_multi_tools_limit=True)
+
 model_name = os.getenv("CHAT_MODEL_NAME", "gemini-2.5-flash")
 
 tools = [
-    google_search,
+    google_seacrh_agent,
     search_memory,
     save_memory,
 ]
