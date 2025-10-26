@@ -8,7 +8,7 @@ class Settings(BaseSettings):
         extra="allow"
     )
     
-    APP_NAME: str = "copilot_chan"
+    APP_NAME: str = "copilot-chan"
     DB_URL: str = "sqlite:///./my_agent_data.db"
     IS_DEV: bool = False
 
