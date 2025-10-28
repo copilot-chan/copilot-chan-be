@@ -25,7 +25,8 @@ adk_chat_agent = ADKAgent(
     app_name=settings.APP_NAME,
     user_id_extractor=user_id_extractor,
     session_timeout_seconds=3600,
-    session_service=session_service
+    session_service=session_service,
+    cleanup_interval_seconds=float("inf"),
 )
 
 ag_ui_router = APIRouter(prefix="/ag-ui", tags=["AG-UI"])
