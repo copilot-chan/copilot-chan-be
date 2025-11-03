@@ -5,10 +5,13 @@ import asyncio
 from google.adk.agents import Agent
 from google.adk.tools.google_search_tool import GoogleSearchTool
 from google.adk.tools import ToolContext
+from google.adk.agents.callback_context import CallbackContext
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.planners import BuiltInPlanner
 from google.genai import types
 from mem0 import AsyncMemoryClient
+
+from core.utils.generate_title import generate_title_from_event
 
 load_dotenv()
 
@@ -77,6 +80,7 @@ async def dynamic_instruction(context: ReadonlyContext) -> str:
     - Khi gặp vấn đề mà bạn thiếu thông tin từ người dùng thì thử search_memory để tìm về thông tin đó.
     - Không nói cho người dùng biết bạn đang dùng tool; hãy thể hiện như bạn thực sự nhớ.
     - Giữ giọng điệu tự nhiên, gần gũi, nhưng chính xác và mạch lạc.
+    - Chỉ gọi tool google_search_agent khi mà thông tin đó bạn thực sự không biết hoặc người dùng muốn lấy thông tin mới nhất từ internet
     
     <user_preferences>
     {memory_context}
@@ -84,6 +88,16 @@ async def dynamic_instruction(context: ReadonlyContext) -> str:
     """.strip()
 
     return instruction
+
+async def after_agent_callback(callback_context: CallbackContext) -> types.Content | None:
+    current_state = callback_context.state
+    
+    if current_state.get("title"):
+        return
+    
+    title = await generate_title_from_event(callback_context.session.events)
+    if not title == "NO_TITLE":
+        current_state["title"] = title
 
 root_agent = Agent(
     name="copilot_chat",
@@ -97,4 +111,5 @@ root_agent = Agent(
             thinking_budget=-1, # auto
         )    
     ),
+    after_agent_callback=after_agent_callback,
 )
