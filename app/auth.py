@@ -1,9 +1,13 @@
 import firebase_admin
 from firebase_admin import credentials, auth
+from fastapi import HTTPException
 
 # Initialize Firebase Admin SDK
 cred = credentials.Certificate("firebase-key.json")
-if not firebase_admin._apps:
+
+try:
+    firebase_admin.get_app()
+except ValueError:
     firebase_admin.initialize_app(cred)
 
 def verify_token(authorization: str | None) -> str | None:
@@ -17,7 +21,7 @@ def verify_token(authorization: str | None) -> str | None:
         The user ID (uid) if the token is valid, otherwise None.
     """
     if not authorization or not authorization.startswith("Bearer "):
-        return None
+        raise HTTPException(status_code=401, detail="Authorization header missing or malformed")
 
     token = authorization.split(" ", 1)[1]
 
@@ -25,10 +29,10 @@ def verify_token(authorization: str | None) -> str | None:
         decoded_token = auth.verify_id_token(token)
         return decoded_token.get("uid")
     except auth.InvalidIdTokenError:
-        return None
+        raise HTTPException(status_code=401, detail="Invalid token")
     except auth.ExpiredIdTokenError:
-        return None
+        raise HTTPException(status_code=401, detail="Token expired")
     except auth.RevokedIdTokenError:
-        return None
+        raise HTTPException(status_code=401, detail="Token revoked")
     except Exception:
-        return None
+        raise HTTPException(status_code=401, detail="Unknown token error")
