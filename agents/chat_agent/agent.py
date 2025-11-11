@@ -1,4 +1,3 @@
-import os
 from dotenv import load_dotenv
 import asyncio
 
@@ -53,8 +52,6 @@ async def save_memory(content: str, tool_context: ToolContext) -> dict:
 
 google_seacrh_agent = GoogleSearchTool(bypass_multi_tools_limit=True)
 
-model_name = os.getenv("CHAT_MODEL_NAME", "gemini-2.5-flash")
-
 tools = [
     google_seacrh_agent,
     search_memory,
@@ -99,17 +96,27 @@ async def after_agent_callback(callback_context: CallbackContext) -> types.Conte
     if not title == "NO_TITLE":
         current_state["title"] = title
 
-root_agent = Agent(
-    name="copilot_chat",
-    model=model_name,
-    description="Trợ lý ảo có khả năng ghi nhớ và trò chuyện tự nhiên.",
-    instruction=dynamic_instruction,
-    tools=tools,
+reasoner_agent = Agent(
+    name="ReasonerAgent",
+    description="Xử lý các yêu cầu phức tạp như suy luận, giải toán và lập trình. Trước khi kích hoạt agent này, hãy báo cho người dùng theo kiểu: 'Để tôi suy nghĩ kỹ hơn một chút...'.",
+    model="gemini-2.5-pro",
     planner=BuiltInPlanner(
         thinking_config=types.ThinkingConfig(
             include_thoughts=True,
             thinking_budget=-1, # auto
-        )    
+        )
     ),
+    tools=tools,
+    instruction=dynamic_instruction,
     after_agent_callback=after_agent_callback,
+)
+
+root_agent = Agent(
+    name="RootAgent",
+    model="gemini-flash-latest",
+    description="Trợ lý ảo có khả năng ghi nhớ và trò chuyện tự nhiên.",
+    instruction=dynamic_instruction,
+    tools=tools,
+    after_agent_callback=after_agent_callback,
+    sub_agents=[reasoner_agent]
 )
