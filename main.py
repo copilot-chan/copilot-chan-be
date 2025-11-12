@@ -15,7 +15,7 @@ def run_agent_server():
     port = int(os.getenv("LOCAL_AGENT_PORT", 8001))
     
 
-    cmd = ["adk", "web" if is_dev else "api_server", "--host", "127.0.0.1", "--port", str(port)]
+    cmd = ["adk", "web" if is_dev else "api_server", "--port", str(port)]
     
     # add --verbose if IS_DEV=true
     if os.getenv("IS_DEV", "false").lower() == "true":
@@ -36,10 +36,10 @@ def run_agent_server():
     process.communicate()
 
 def run_client_app():
-    import uvicorn
-
     is_dev = os.getenv("IS_DEV", "false").lower() == "true"
-    uvicorn.run("app.main:app", host="127.0.0.1", port=8000, reload=is_dev)
+    host = "127.0.0.1" if is_dev else "0.0.0.0"
+    cmd = ["uvicorn", "app.main:app", "--host", host, "--port", "8000"]
+    subprocess.run(cmd)
 
 def main():
     processes = []
