@@ -1,6 +1,6 @@
-import httpx
 import io
 
+import httpx
 from fastapi import FastAPI, APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from ag_ui_adk import ADKAgent, add_adk_fastapi_endpoint
@@ -10,6 +10,7 @@ from agents.chat_agent.agent import root_agent as chat_agent
 from app.config import settings
 from app.utils.user_id_extractor import user_id_extractor
 from app.deps import get_current_uid
+from app.routers.memory import router as memory_router
 
 app = FastAPI()
 
@@ -29,6 +30,7 @@ ag_ui_router = APIRouter(prefix="/ag-ui", tags=["AG-UI"])
 add_adk_fastapi_endpoint(app=ag_ui_router, agent=adk_chat_agent, path="/chat")
 
 app.include_router(ag_ui_router)
+app.include_router(memory_router)
 
 @app.api_route("/apps/{app_name}/users/{user_id}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def proxy_user_apps(
