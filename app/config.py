@@ -11,5 +11,6 @@ class Settings(BaseSettings):
     APP_NAME: str = "copilot-chan"
     DB_URL: str = "sqlite:///./my_agent_data.db"
     IS_DEV: bool = False
+    LOCAL_AGENT_PORT: int = 8001
 
 settings = Settings()
