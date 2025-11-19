@@ -42,7 +42,7 @@ async def save_memory(content: str, tool_context: ToolContext) -> dict:
     user_id = tool_context.session.user_id
     
     try:
-        asyncio.create_task(mem0.add([{"role": "user", "content": content}], user_id=user_id))
+        asyncio.create_task(mem0.add(content, user_id=user_id, infer=False))
         return {"status": "success", "message": "Information saved to memory"}
     except Exception as e:
         return {"status": "error", "message": f"Failed to save memory: {str(e)}"}
