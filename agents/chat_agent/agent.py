@@ -8,13 +8,10 @@ from google.adk.agents.callback_context import CallbackContext
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.planners import BuiltInPlanner
 from google.genai import types
-from mem0 import AsyncMemoryClient
-
+from core.memory.client import mem0
 from core.utils.generate_title import generate_title_from_event
 
 load_dotenv()
-
-mem0 = AsyncMemoryClient()
 
 # Define memory function tools
 async def search_memory(query: str, tool_context: ToolContext) -> dict:
@@ -57,11 +54,14 @@ tools = [
     search_memory,
     save_memory,
 ]
-
+import time
 async def dynamic_instruction(context: ReadonlyContext) -> str:
     user_id = context.session.user_id
     filters = {"user_id": user_id}
+    start_time = time.time()
     memories = await mem0.search("user_preferences", filters=filters)
+    end_time = time.time()
+    print(f"Thời gian tìm kiếm user_preferences: {end_time - start_time:.4f} giây")
     if memories.get("results"):
         memory_list = memories['results']
         memory_context = "\n".join([f"- {mem['memory']}" for mem in memory_list])
