@@ -5,24 +5,26 @@ from dotenv import load_dotenv
 import subprocess
 from multiprocessing import Process
 
+from app.config import settings
+
 load_dotenv()
 
 def run_agent_server():
     # Choose command based on IS_DEV
-    is_dev = os.getenv("IS_DEV", "false").lower() == "true"
+    is_dev = settings.IS_DEV
 
     # Get port from LOCAL_AGENT_PORT environment variable, default to 8001 if not set
-    port = int(os.getenv("LOCAL_AGENT_PORT", 8001))
+    port = settings.LOCAL_AGENT_PORT
     
 
     cmd = ["adk", "web" if is_dev else "api_server", "--port", str(port)]
     
     # add --verbose if IS_DEV=true
-    if os.getenv("IS_DEV", "false").lower() == "true":
+    if settings.IS_DEV:
         cmd.append("--verbose")
         
     # add --session_service_uri from DB_URL
-    db_url = os.getenv("DB_URL")
+    db_url = settings.DB_URL
     if db_url:
         cmd.extend(["--session_service_uri", db_url])
         
@@ -36,9 +38,9 @@ def run_agent_server():
     process.communicate()
 
 def run_client_app():
-    is_dev = os.getenv("IS_DEV", "false").lower() == "true"
+    is_dev = settings.IS_DEV
     host = "127.0.0.1" if is_dev else "0.0.0.0"
-    cmd = ["uvicorn", "app.main:app", "--host", host, "--port", "8000"]
+    cmd = ["uvicorn", "app.main:app", "--host", host, "--port", str(settings.CLIENT_PORT)]
     subprocess.run(cmd)
 
 def main():
