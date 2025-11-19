@@ -1,9 +1,8 @@
-
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, BackgroundTasks
 from app.deps import get_current_uid
 from httpx import HTTPStatusError
 
-from app.mem0_client import mem0
+from core.memory.client import mem0
 from app.config import settings
 
 router = APIRouter(prefix="/memory", tags=["memory"])
@@ -77,3 +76,44 @@ async def delete_memory(memory_id: str, uid: str = Depends(get_current_uid)):
             
     except Exception as e:
         raise HTTPException(**handle_generic_error(e))
+
+@router.post("/warmup")
+async def warmup_memory(
+    background_tasks: BackgroundTasks,
+    uid: str = Depends(get_current_uid)
+):
+    """
+    Trigger cache warmup for the current user.
+    """
+    try:
+        background_tasks.add_task(mem0.warmup, uid)
+        return {"status": "success", "message": "Cache warmup started"}
+    except Exception as e:
+        raise HTTPException(**handle_generic_error(e))
+
+@router.post("/webhook")
+async def memory_webhook(request: dict, background_tasks: BackgroundTasks):
+    """
+    Webhook endpoint for Mem0 events.
+    """
+    try:        
+        # Extract user_id
+        user_id = None
+        event_details = request.get("event_details", {})
+        data = event_details.get("data", {})
+        
+        # Try to find user_id in event_details (based on actual payload)
+        if "user_id" in event_details:
+            user_id = event_details["user_id"]
+            
+        # Clear cache
+        if user_id:
+            mem0.reset_cache(user_id)
+            # Trigger warmup in background
+            background_tasks.add_task(mem0.warmup, user_id)
+        else:
+            mem0.reset_cache()
+            
+        return {"status": "success"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

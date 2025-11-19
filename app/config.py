@@ -13,5 +13,7 @@ class Settings(BaseSettings):
     IS_DEV: bool = False
     LOCAL_AGENT_PORT: int = 8001
     CLIENT_PORT: int = 8000
+    WEBHOOK_HOST: str | None = None
+    MEM0_PROJECT_ID: str | None = None
 
 settings = Settings()

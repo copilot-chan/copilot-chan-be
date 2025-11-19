@@ -4,10 +4,20 @@ import sys
 from dotenv import load_dotenv
 import subprocess
 from multiprocessing import Process
+import time
+
+from mem0 import MemoryClient
 
 from app.config import settings
 
 load_dotenv()
+
+# Try to import pyngrok, but don't fail if not present (unless needed)
+try:
+    from pyngrok import ngrok
+except ImportError:
+    ngrok = None
+
 
 def run_agent_server():
     # Choose command based on IS_DEV
@@ -43,7 +53,66 @@ def run_client_app():
     cmd = ["uvicorn", "app.main:app", "--host", host, "--port", str(settings.CLIENT_PORT)]
     subprocess.run(cmd)
 
+def setup_webhook():
+    """
+    Setup Mem0 webhook.
+    Returns the webhook_id if created, or None.
+    """
+    webhook_id = None
+    public_url = None
+    
+    if settings.IS_DEV:
+        if ngrok:
+            try:
+                # Open a ngrok tunnel to the client port
+                http_tunnel = ngrok.connect(settings.CLIENT_PORT)
+                public_url = http_tunnel.public_url
+                print(f"[INFO] Ngrok tunnel started: {public_url}")
+            except Exception as e:
+                print(f"[ERROR] Failed to start ngrok: {e}")
+        else:
+            print("[WARNING] pyngrok not installed. Skipping automatic webhook setup in DEV mode.")
+    else:
+        public_url = settings.WEBHOOK_HOST
+
+    if public_url:
+        try:
+            # Initialize synchronous Mem0 client for setup
+            client = MemoryClient()
+            webhook_url = f"{public_url}/memory/webhook"
+            
+            print(f"[INFO] Registering webhook: {webhook_url}")
+            
+            # Create webhook
+            # Note: We might want to check if it already exists or just create a new one.
+            # For simplicity, we create a new one.
+            webhook = client.create_webhook(
+                url=webhook_url,
+                name=f"Copilot-Chan Webhook ({'DEV' if settings.IS_DEV else 'PROD'})",
+                event_types=["memory_add", "memory_update", "memory_delete"],
+                project_id=settings.MEM0_PROJECT_ID
+            )
+            webhook_id = webhook.get("webhook_id")
+            print(f"[INFO] Webhook created with ID: {webhook_id}")
+            
+        except Exception as e:
+            print(f"[ERROR] Failed to register webhook: {e}")
+            
+    return webhook_id
+
+def cleanup_webhook(webhook_id):
+    if webhook_id:
+        try:
+            client = MemoryClient()
+            client.delete_webhook(webhook_id)
+            print(f"[INFO] Webhook {webhook_id} deleted.")
+        except Exception as e:
+            print(f"[ERROR] Failed to delete webhook: {e}")
+
 def main():
+    # Setup webhook before starting servers
+    webhook_id = setup_webhook()
+
     processes = []
     
     # Create 2 processes
@@ -57,6 +126,10 @@ def main():
     # Handle Ctrl+C cleanly
     def signal_handler(sig, frame):
         print("\n[INFO] Ctrl+C detected. Terminating both servers...")
+        
+        # Cleanup webhook
+        cleanup_webhook(webhook_id)
+        
         for p in processes:
             if p.is_alive():
                 p.terminate()
