@@ -12,10 +12,10 @@ dependencies = [
     "firebase-admin>=6.9.0",
     "google-adk>=1.19.0",
     "mem0ai>=1.0.0",
-    "ruff>=0.14.1",
 ]
 
 [dependency-groups]
 dev = [
     "pyngrok>=7.5.0",
+    "ruff>=0.14.5",
 ]
