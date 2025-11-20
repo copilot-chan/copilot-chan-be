@@ -100,7 +100,6 @@ async def memory_webhook(request: dict, background_tasks: BackgroundTasks):
         # Extract user_id
         user_id = None
         event_details = request.get("event_details", {})
-        data = event_details.get("data", {})
         
         # Try to find user_id in event_details (based on actual payload)
         if "user_id" in event_details:

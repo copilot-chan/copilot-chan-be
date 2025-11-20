@@ -4,7 +4,6 @@ import sys
 from dotenv import load_dotenv
 import subprocess
 from multiprocessing import Process
-import time
 
 from mem0 import MemoryClient
 

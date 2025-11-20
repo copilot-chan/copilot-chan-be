@@ -54,14 +54,11 @@ tools = [
     search_memory,
     save_memory,
 ]
-import time
+
 async def dynamic_instruction(context: ReadonlyContext) -> str:
     user_id = context.session.user_id
     filters = {"user_id": user_id}
-    start_time = time.time()
     memories = await mem0.search("user_preferences", filters=filters)
-    end_time = time.time()
-    print(f"Thời gian tìm kiếm user_preferences: {end_time - start_time:.4f} giây")
     if memories.get("results"):
         memory_list = memories['results']
         memory_context = "\n".join([f"- {mem['memory']}" for mem in memory_list])
