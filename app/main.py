@@ -14,7 +14,13 @@ from app.routers.memory import router as memory_router
 
 app = FastAPI()
 
-session_service = DatabaseSessionService(db_url=settings.DB_URL)
+session_service = DatabaseSessionService(
+    db_url=settings.DB_URL,
+    connect_args={
+        "ssl": True,
+        "channel_binding": "require"
+    }
+)
 
 adk_chat_agent = ADKAgent(
     adk_agent=chat_agent,
