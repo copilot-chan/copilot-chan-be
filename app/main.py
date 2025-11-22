@@ -18,7 +18,7 @@ session_service = DatabaseSessionService(
     db_url=settings.DB_URL,
     connect_args={
         "ssl": True,
-        "channel_binding": "require"
+        # "channel_binding": "require"
     }
 )
 
