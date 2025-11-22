@@ -5,7 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "ag-ui-adk>=0.3.1",
+    "ag-ui-adk==0.3.1",
     "asyncpg>=0.30.0",
     "cachetools>=6.2.1",
     "fastapi==0.118.3",
