@@ -4,6 +4,7 @@ import asyncio
 from google.adk.agents import Agent
 from google.adk.tools.google_search_tool import GoogleSearchTool
 from google.adk.tools import ToolContext
+from google.adk.tools.load_web_page import load_web_page
 from google.adk.agents.callback_context import CallbackContext
 from google.adk.agents.readonly_context import ReadonlyContext
 from google.adk.planners import BuiltInPlanner
@@ -53,6 +54,7 @@ tools = [
     google_seacrh_agent,
     search_memory,
     save_memory,
+    load_web_page,
 ]
 
 async def dynamic_instruction(context: ReadonlyContext) -> str:
