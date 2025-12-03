@@ -38,6 +38,10 @@ add_adk_fastapi_endpoint(app=ag_ui_router, agent=adk_chat_agent, path="/chat")
 app.include_router(ag_ui_router)
 app.include_router(memory_router)
 
+@app.get("/ping")
+async def ping():
+    return {"status": "ok"}
+
 @app.api_route("/apps/{app_name}/users/{user_id}/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
 async def proxy_user_apps(
     app_name: str,
