@@ -92,10 +92,17 @@ async def warmup_memory(
         raise HTTPException(**handle_generic_error(e))
 
 @router.post("/webhook")
-async def memory_webhook(request: dict, background_tasks: BackgroundTasks):
+async def memory_webhook(
+    request: dict, 
+    background_tasks: BackgroundTasks,
+    secret: str | None = Query(None)
+):
     """
     Webhook endpoint for Mem0 events.
     """
+    if settings.MEM0_WEBHOOK_SECRET and secret != settings.MEM0_WEBHOOK_SECRET:
+        raise HTTPException(status_code=403, detail="Forbidden")
+
     try:        
         # Extract user_id
         user_id = None

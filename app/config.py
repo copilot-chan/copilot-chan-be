@@ -15,5 +15,6 @@ class Settings(BaseSettings):
     CLIENT_PORT: int = 8000
     WEBHOOK_HOST: str | None = None
     MEM0_PROJECT_ID: str | None = None
+    MEM0_WEBHOOK_SECRET: str | None = None
 
 settings = Settings()

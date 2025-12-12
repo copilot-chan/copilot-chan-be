@@ -1,6 +1,7 @@
 import os
 import signal
 import sys
+import secrets
 from dotenv import load_dotenv
 import subprocess
 from multiprocessing import Process
@@ -79,6 +80,8 @@ def setup_webhook():
             # Initialize synchronous Mem0 client for setup
             client = MemoryClient()
             webhook_url = f"{public_url}/memory/webhook"
+            if settings.MEM0_WEBHOOK_SECRET:
+                webhook_url += f"?secret={settings.MEM0_WEBHOOK_SECRET}"
             
             print(f"[INFO] Registering webhook: {webhook_url}")
             
@@ -109,6 +112,10 @@ def cleanup_webhook(webhook_id):
             print(f"[ERROR] Failed to delete webhook: {e}")
 
 def main():
+    # Generate random secret
+    secret = secrets.token_urlsafe(32)
+    settings.MEM0_WEBHOOK_SECRET = secret
+
     # Setup webhook before starting servers
     webhook_id = setup_webhook()
 
