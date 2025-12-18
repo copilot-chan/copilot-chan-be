@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import asyncio
 
 from google.adk.agents import Agent
+from google.adk.models.google_llm import Gemini
 from google.adk.tools.google_search_tool import GoogleSearchTool
 from google.adk.tools import ToolContext
 from google.adk.tools.load_web_page import load_web_page
@@ -112,7 +113,16 @@ reasoner_agent = Agent(
 
 root_agent = Agent(
     name="RootAgent",
-    model="gemini-flash-latest",
+    model=Gemini(
+        model="gemini-3-flash-preview",
+        # use_interactions_api=True,  # Enable Interactions API
+    ),
+    planner=BuiltInPlanner(
+        thinking_config=types.ThinkingConfig(
+            include_thoughts=True,
+            thinking_level="MINIMAL",
+        )
+    ),
     description="Trợ lý ảo có khả năng ghi nhớ và trò chuyện tự nhiên.",
     instruction=dynamic_instruction,
     tools=tools,
