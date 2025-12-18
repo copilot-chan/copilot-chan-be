@@ -98,12 +98,15 @@ async def after_agent_callback(callback_context: CallbackContext) -> types.Conte
 
 reasoner_agent = Agent(
     name="ReasonerAgent",
-    description="Xử lý các yêu cầu phức tạp như suy luận, giải toán và lập trình. Trước khi kích hoạt agent này, hãy báo cho người dùng theo kiểu: 'Để tôi suy nghĩ kỹ hơn một chút...'.",
-    model="gemini-2.5-pro",
+    description="Xử lý các yêu cầu phức tạp như suy luận, giải toán và lập trình các bài toán khó. Trước khi kích hoạt agent này, hãy báo cho người dùng theo kiểu: 'Để tôi suy nghĩ kỹ hơn một chút...'.",
+    model=Gemini(
+        model="gemini-3-flash-preview",
+        # use_interactions_api=True,  # Enable Interactions API
+    ),
     planner=BuiltInPlanner(
         thinking_config=types.ThinkingConfig(
             include_thoughts=True,
-            thinking_budget=-1, # auto
+            thinking_level="HIGH",
         )
     ),
     tools=tools,
