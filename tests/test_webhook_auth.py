@@ -2,14 +2,14 @@ import os
 
 import sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from fastapi.testclient import TestClient
+from unittest.mock import patch
+
 from dotenv import load_dotenv
 load_dotenv()
 
-from fastapi.testclient import TestClient
-from unittest.mock import patch, MagicMock
-
-from app.main import app
-from app.config import settings
+from app.main import app # noqa: E402
+from app.config import settings # noqa: E402
 
 client = TestClient(app)
 
@@ -18,7 +18,7 @@ def test_webhook_auth_success():
     # Mocking settings to ensure the secret is set
     with patch.object(settings, 'MEM0_WEBHOOK_SECRET', 'test-secret'):
         # Mock background tasks to avoid actual execution
-        with patch('app.routers.memory.mem0.reset_cache') as mock_reset:
+        with patch('app.routers.memory.mem0.reset_cache'):
             response = client.post(
                 "/memory/webhook?secret=test-secret",
                 json={"event_details": {"user_id": "test-user"}}
@@ -49,7 +49,7 @@ def test_webhook_auth_failure_missing_secret():
 def test_webhook_no_secret_configured():
     """Test webhook when no secret is configured on server"""
     with patch.object(settings, 'MEM0_WEBHOOK_SECRET', None):
-         with patch('app.routers.memory.mem0.reset_cache') as mock_reset:
+         with patch('app.routers.memory.mem0.reset_cache'):
             response = client.post(
                 "/memory/webhook",
                 json={"event_details": {"user_id": "test-user"}}
