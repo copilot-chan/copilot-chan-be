@@ -59,7 +59,7 @@ python main.py
 
 ## Project Structure
 
-*   `agents/`: Contains logic for AI Agents (Chat, Voice).
+*   `chat_agent/`: Contains logic for the main Chat Agent.
 *   `app/`: Source code for API Server (FastAPI endpoints, router).
 *   `core/`: Shared modules (tools, utils).
 *   `main.py`: Entry point to launch the system.

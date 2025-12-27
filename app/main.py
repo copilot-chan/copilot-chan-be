@@ -6,7 +6,7 @@ from fastapi.responses import StreamingResponse
 from ag_ui_adk import ADKAgent, add_adk_fastapi_endpoint
 from google.adk.sessions import DatabaseSessionService
 
-from agents.chat_agent.agent import root_agent as chat_agent
+from chat_agent.agent import root_agent as chat_agent
 from app.config import settings
 from app.utils.user_id_extractor import user_id_extractor
 from app.deps import get_current_uid

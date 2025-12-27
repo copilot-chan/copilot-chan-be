@@ -37,8 +37,6 @@ def run_agent_server():
     db_url = settings.DB_URL
     if db_url:
         cmd.extend(["--session_service_uri", db_url])
-        
-    cmd.append("./agents")
     
     # Add project root to PYTHONPATH
     env = os.environ.copy()
