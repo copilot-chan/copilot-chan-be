@@ -1,0 +1,52 @@
+# config.yaml.example
+# Example configuration for multiple MCP servers
+# Notes:
+#   - Each server must have exactly one connection param
+#   - tool_filter, tool_name_prefix, auth_scheme, auth_credential are optional
+#   - Secrets like tokens should come from environment variables
+
+mcpServers:
+  - # Server 1
+    stdio_connection_params:
+      command: npx
+      args:
+        - -y
+        - "@modelcontextprotocol/server-filesystem-1"
+      timeout: 10
+    tool_filter:
+      - read_file
+      - list_directory
+    tool_name_prefix: fs1_
+    auth_scheme:
+      type: bearer
+    auth_credential:
+      token: ${MCP_TOKEN_1}
+
+  - # Server 2
+    stdio_connection_params:
+      command: npx
+      args:
+        - -y
+        - "@modelcontextprotocol/server-filesystem-2"
+      timeout: 10
+    tool_filter:
+      - write_file
+      - delete_file
+    tool_name_prefix: fs2_
+    auth_scheme:
+      type: bearer
+    auth_credential:
+      token: ${MCP_TOKEN_2}
+
+  - # Server 3 (example HTTP stream server)
+    streamable_http_connection_params:
+      base_url: http://localhost:8080
+      timeout: 15
+    tool_filter:
+      - list_directory
+      - upload_file
+    tool_name_prefix: fs3_
+    auth_scheme:
+      type: apikey
+    auth_credential:
+      token: ${MCP_TOKEN_3}

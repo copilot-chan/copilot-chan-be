@@ -12,8 +12,12 @@ from google.adk.planners import BuiltInPlanner
 from google.genai import types
 from core.memory.client import mem0
 from core.utils.generate_title import generate_title_from_event
+from chat_agent.load_mcp_toolset import load_mcp_toolsets
 
 load_dotenv()
+
+# Initialize MCP Toolsets
+mcp_toolsets = load_mcp_toolsets()
 
 # Define memory function tools
 async def search_memory(query: str, tool_context: ToolContext) -> dict:
@@ -56,6 +60,7 @@ tools = [
     search_memory,
     save_memory,
     load_web_page,
+    *mcp_toolsets
 ]
 
 async def dynamic_instruction(context: ReadonlyContext) -> str:
